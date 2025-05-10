@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  labels:
+    app: myapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp-container
+        image: httien404/myapp:latest  # Replace this
+        ports:
+        - containerPort: 3000  # Adjust if your app uses another port
+        env:
+        - name: MONGO_URI
+          value: mongodb://admin:admin123@mongodb-service:27017/?authSource=admin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  selector:
+    app: myapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000  # Match this to containerPort
+  type: LoadBalancer  # You can change this to NodePort if needed
